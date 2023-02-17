@@ -1,21 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import "@aws-amplify/ui-react/styles.css";
-import { API } from "aws-amplify";
-import {
-  Button,
-  Flex,
-  Heading,
-  Text,
-  TextField,
-  View,
-  withAuthenticator,
-} from "@aws-amplify/ui-react";
-import { listNotes } from "./graphql/queries";
-import {
-  createNote as createNoteMutation,
-  deleteNote as deleteNoteMutation,
-} from "./graphql/mutations";
 import { API, Storage } from 'aws-amplify';
 import {
   Button,
@@ -50,7 +35,7 @@ const App = ({ signOut }) => {
   setNotes(notesFromAPI);
 }
 
-  async function createNote(event) {
+ async function createNote(event) {
   event.preventDefault();
   const form = new FormData(event.target);
   const image = form.get("image");
@@ -68,7 +53,7 @@ const App = ({ signOut }) => {
   event.target.reset();
 }
 
-  async function deleteNote({ id, name }) {
+ async function deleteNote({ id, name }) {
   const newNotes = notes.filter((note) => note.id !== id);
   setNotes(newNotes);
   await Storage.remove(name);
@@ -102,11 +87,18 @@ const App = ({ signOut }) => {
           <Button type="submit" variation="primary">
             Create Note
           </Button>
+		   <View
+  name="image"
+  as="input"
+  type="file"
+  style={{ alignSelf: "end" }}
+/>
         </Flex>
       </View>
       <Heading level={2}>Current Notes</Heading>
       <View margin="3rem 0">
-        {notes.map((note) => (
+    
+    {notes.map((note) => (
   <Flex
     key={note.id || note.name}
     direction="row"
@@ -129,16 +121,10 @@ const App = ({ signOut }) => {
     </Button>
   </Flex>
 ))}
-        ))}
+))}
       </View>
       <Button onClick={signOut}>Sign Out</Button>
     </View>
-	<View
-  name="image"
-  as="input"
-  type="file"
-  style={{ alignSelf: "end" }}
-/>
   );
 };
 
