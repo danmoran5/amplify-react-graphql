@@ -12,6 +12,11 @@ import {
   View,
   withAuthenticator,
 } from '@aws-amplify/ui-react';
+import { listNotes } from "./graphql/queries";
+import {
+  createNote as createNoteMutation,
+  deleteNote as deleteNoteMutation,
+} from "./graphql/mutations";
 
 const App = ({ signOut }) => {
   const [notes, setNotes] = useState([]);
@@ -20,7 +25,7 @@ const App = ({ signOut }) => {
     fetchNotes();
   }, []);
 
-  async function fetchNotes() {
+ async function fetchNotes() {
   const apiData = await API.graphql({ query: listNotes });
   const notesFromAPI = apiData.data.listNotes.items;
   await Promise.all(
@@ -35,7 +40,7 @@ const App = ({ signOut }) => {
   setNotes(notesFromAPI);
 }
 
- async function createNote(event) {
+  async function createNote(event) {
   event.preventDefault();
   const form = new FormData(event.target);
   const image = form.get("image");
@@ -53,7 +58,7 @@ const App = ({ signOut }) => {
   event.target.reset();
 }
 
- async function deleteNote({ id, name }) {
+async function deleteNote({ id, name }) {
   const newNotes = notes.filter((note) => note.id !== id);
   setNotes(newNotes);
   await Storage.remove(name);
@@ -84,21 +89,21 @@ const App = ({ signOut }) => {
             variation="quiet"
             required
           />
-          <Button type="submit" variation="primary">
-            Create Note
-          </Button>
-		   <View
+		    <View
   name="image"
   as="input"
   type="file"
   style={{ alignSelf: "end" }}
 />
+          <Button type="submit" variation="primary">
+            Create Note
+          </Button>
         </Flex>
       </View>
+
       <Heading level={2}>Current Notes</Heading>
       <View margin="3rem 0">
-    
-    {notes.map((note) => (
+       {notes.map((note) => (
   <Flex
     key={note.id || note.name}
     direction="row"
@@ -120,7 +125,6 @@ const App = ({ signOut }) => {
       Delete note
     </Button>
   </Flex>
-))}
 ))}
       </View>
       <Button onClick={signOut}>Sign Out</Button>
